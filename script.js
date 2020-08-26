@@ -3,13 +3,19 @@ class Number {
         this.currentNumber = " ";
         this.previousNumber = " ";
         this.operator= " ";
+        this.resetInfo = false;
         this.previousDisplay = previousDisplay;
         this.currentDisplay = currentDisplay;
     }
 
+
     appendNumber(number) {
+        if(this.curentNumber !== " " && this.previousNumber === " " && this.resetInfo) {
+            this.reset()
+        }
         this.currentNumber = this.currentNumber.toString() + number; 
     }
+
 
     chooseOperation(operator) {
         if(this.previousNumber != " " && this.currentNumber != " ") {
@@ -21,6 +27,7 @@ class Number {
             this.currentNumber = " ";
         }
     }
+
 
     calculate() {
         let previous = parseFloat(this.previousNumber);
@@ -40,15 +47,19 @@ class Number {
                 result = previous / actual;
                 break;
         }
-        console.log("Resul", result);
+        if(isNaN(result)) {
+            this.reset();
+            return;
+        }
         this.previousNumber = " ";
         this.operator = " ";
         this.currentNumber = result;
+        this.resetInfo = true;
     }
 
     updateDisplay() {
-        this.currentDisplay.innerHTML = this.currentNumber;
-        let temp = this.previousNumber + this.operator
+        this.currentDisplay.innerHTML = this.createNumberFormat(this.currentNumber);
+        let temp = this.createNumberFormat(this.previousNumber) + this.operator;
         this.previousDisplay.innerHTML = temp;
     }
 
@@ -56,12 +67,30 @@ class Number {
         this.currentNumber = " ";
         this.previousNumber = " ";
         this.operator = " ";
+        this.resetInfo = false;
         this.updateDisplay();
     }
 
     deleteElement() {
         this.currentNumber = this.currentNumber.slice(0, -1);
         this.updateDisplay();
+    }
+
+    createNumberFormat(number) {
+        let tempNumber = parseFloat(number);
+        if(isNaN(tempNumber)) {
+            return " ";
+        }
+
+        let integerNumbers = number.toString().split(".")[0]
+
+        if(number.toString().includes(".")) {
+            let decimalNumbers = number.toString().split(".")[1]
+            return integerNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + decimalNumbers;
+
+        } else {
+            return integerNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     }
 }
 
@@ -87,8 +116,13 @@ numbers.forEach(number => {
 operators.forEach(operator => {
     operator.addEventListener("click", () => {
         if(operator.value === "=") {
-            obj.calculate();
-            obj.updateDisplay();
+            if(obj.previousNumber == " " || obj.curentNumber == " ") {
+                obj.reset();
+                return;
+            } else {
+                obj.calculate();
+                obj.updateDisplay();
+            }
         } else {
             obj.chooseOperation(operator.value);
             obj.updateDisplay();
@@ -118,7 +152,4 @@ dot.forEach(button => {
         }
     })
 })
-
-
-
 
