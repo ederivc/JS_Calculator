@@ -1,8 +1,8 @@
 class Number {
     constructor(previousDisplay, currentDisplay) {
-        this.currentNumber = " ";
-        this.previousNumber = " ";
-        this.operator= " ";
+        this.currentNumber = "";
+        this.previousNumber = "";
+        this.operator = "";
         this.resetInfo = false;
         this.previousDisplay = previousDisplay;
         this.currentDisplay = currentDisplay;
@@ -10,21 +10,22 @@ class Number {
 
 
     appendNumber(number) {
-        if(this.curentNumber !== " " && this.previousNumber === " " && this.resetInfo) {
+        if(this.curentNumber !== "" && this.previousNumber === "" && this.resetInfo) {
             this.reset()
         }
+
         this.currentNumber = this.currentNumber.toString() + number; 
     }
 
 
     chooseOperation(operator) {
-        if(this.previousNumber != " " && this.currentNumber != " ") {
+        if(this.previousNumber != "" && this.currentNumber != "") {
             this.operator = operator;
             this.calculate();
         } else {
             this.operator = operator;
             this.previousNumber = this.currentNumber;
-            this.currentNumber = " ";
+            this.currentNumber = "";
         }
     }
 
@@ -51,22 +52,22 @@ class Number {
             this.reset();
             return;
         }
-        this.previousNumber = " ";
-        this.operator = " ";
+        this.previousNumber = "";
+        this.operator = "";
         this.currentNumber = result;
         this.resetInfo = true;
     }
 
     updateDisplay() {
-        this.currentDisplay.innerHTML = this.createNumberFormat(this.currentNumber);
+        this.currentDisplay.innerHTML =this.createNumberFormat(this.currentNumber);
         let temp = this.createNumberFormat(this.previousNumber) + this.operator;
         this.previousDisplay.innerHTML = temp;
     }
 
     reset() {
-        this.currentNumber = " ";
-        this.previousNumber = " ";
-        this.operator = " ";
+        this.currentNumber = "";
+        this.previousNumber = "";
+        this.operator = "";
         this.resetInfo = false;
         this.updateDisplay();
     }
@@ -77,9 +78,13 @@ class Number {
     }
 
     createNumberFormat(number) {
+        console.log(number)
+        if(number === ".") {
+            return "."
+        }
         let tempNumber = parseFloat(number);
         if(isNaN(tempNumber)) {
-            return " ";
+            return "";
         }
 
         let integerNumbers = number.toString().split(".")[0]
